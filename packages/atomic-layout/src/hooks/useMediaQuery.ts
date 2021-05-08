@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 import {
   MediaQuery as MediaQueryParams,
-  compose,
   joinQueryList,
   normalizeQuery,
   transformNumeric,
@@ -11,8 +10,10 @@ import {
  * Creates a media querty string based on the given params.
  */
 export const createMediaQuery = (queryParams: MediaQueryParams): string => {
-  return compose(
-    joinQueryList(([paramName, paramValue]) => {
+  const queryList = normalizeQuery(queryParams)
+  const mediaQueryString = joinQueryList(
+    queryList,
+    ({ displayName, value }) => {
       /**
        * Transform values that begin with a number to prevent
        * transformations of "calc" expressions.
@@ -21,14 +22,15 @@ export const createMediaQuery = (queryParams: MediaQueryParams): string => {
        *
        * (min-width: 750) ==> (min-width: 750px)
        */
-      const resolvedParamValue = /^\d/.test(String(paramValue))
-        ? transformNumeric(paramValue)
-        : paramValue
+      const resolvedParamValue = /^\d/.test(String(value))
+        ? transformNumeric(value)
+        : value
 
-      return `(${paramName}:${resolvedParamValue})`
-    }),
-    normalizeQuery,
-  )(queryParams)
+      return `(${displayName}:${resolvedParamValue})`
+    },
+  )
+
+  return mediaQueryString
 }
 
 type UseMediaQuery = (

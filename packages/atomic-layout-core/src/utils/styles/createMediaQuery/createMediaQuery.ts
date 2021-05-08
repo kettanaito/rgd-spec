@@ -1,24 +1,20 @@
-import {
-  Numeric,
-  Breakpoint,
-  BreakpointBehavior,
-} from '../../../const/defaultOptions'
+import { Breakpoint, BreakpointBehavior } from '../../../const/defaultOptions'
 import transformNumeric from '../../math/transformNumeric'
-import normalizeQuery from '../../styles/normalizeQuery'
+import normalizeQuery, {
+  NormalizedQueryParam,
+} from '../../styles/normalizeQuery'
 import compose from '../../functions/compose'
-
-type MediaQueryPair = [string, Numeric]
 
 /**
  * Determines whether a given media query param should be added
  * to the media query string based on a breakpoint's behavior.
  */
 const shouldAppendProperty = (
-  queryParam: string,
+  queryParam: NormalizedQueryParam,
   behavior: BreakpointBehavior,
 ): boolean => {
-  const [prefix, splitPropName] = queryParam.split('-')
-  const isDimensionalProp = ['height', 'width'].includes(splitPropName)
+  const { prefix, name } = queryParam
+  const isDimensionalProp = ['height', 'width'].includes(name)
 
   if (!isDimensionalProp) {
     return true
@@ -31,31 +27,45 @@ const shouldAppendProperty = (
 }
 
 const filterRelevantQueryParams = (behavior: BreakpointBehavior) => (
-  queryList: MediaQueryPair[],
-): MediaQueryPair[] => {
-  return queryList.filter(([queryParam]) =>
-    shouldAppendProperty(queryParam, behavior),
+  queryList: NormalizedQueryParam[],
+): NormalizedQueryParam[] => {
+  return queryList.filter((normalizedQueryParam) =>
+    shouldAppendProperty(normalizedQueryParam, behavior),
   )
 }
 
 /**
  * Joins a given media query params list with the given transformer function.
  */
-export const joinQueryList = (transformer: (pair: MediaQueryPair) => any) => (
-  queryList: MediaQueryPair[],
+export const joinQueryList = (
+  queryList: NormalizedQueryParam[],
+  transformer: (pair: NormalizedQueryParam) => any,
 ) => {
   return queryList.map(transformer).join(' and ')
+}
+
+export const createQueryList = (
+  breakpoint: Breakpoint,
+  behavior: BreakpointBehavior,
+): NormalizedQueryParam[] => {
+  return compose(
+    filterRelevantQueryParams(behavior),
+    normalizeQuery,
+  )(breakpoint)
 }
 
 export default function createMediaQuery(
   breakpoint: Breakpoint,
   behavior: BreakpointBehavior,
 ): string {
-  return compose(
-    joinQueryList(([dashedQueryProp, propValue]) => {
-      return `(${dashedQueryProp}:${String(transformNumeric(propValue))})`
-    }),
-    filterRelevantQueryParams(behavior),
-    normalizeQuery,
-  )(breakpoint)
+  const queryList = createQueryList(breakpoint, behavior)
+
+  const mediaQueryString = joinQueryList(
+    queryList,
+    ({ displayName, value }) => {
+      return `(${displayName}:${String(transformNumeric(value))})`
+    },
+  )
+
+  return mediaQueryString
 }

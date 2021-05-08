@@ -1,20 +1,30 @@
 import { Numeric, Breakpoint } from '../../../const/defaultOptions'
 import isset from '../../functions/isset'
 import toDashedString from '../../strings/toDashedString'
+import toLowerCaseFirst from '../../strings/toLowerCaseFirst'
+
+export interface NormalizedQueryParam {
+  prefix: string
+  name: string
+  displayName: string
+  value: Numeric
+}
 
 /**
  * Normalizes given media query object to a list of [propName, propValue].
- * @example
- * normalizeQuery({ minWidth: 120 })
- * // [['min-width', 120]]
  */
 export default function normalizeQuery(
-  queryProps: Breakpoint,
-): Array<[string, Numeric]> {
-  return Object.entries<Numeric>(queryProps)
-    .filter(([_, propValue]) => isset(propValue))
-    .map<[string, Numeric]>(([propName, propValue]) => [
-      toDashedString(propName),
-      propValue,
-    ])
+  breakpoint: Breakpoint,
+): NormalizedQueryParam[] {
+  return Object.entries<Numeric>(breakpoint)
+    .filter(([_, value]) => isset(value))
+    .map(([propName, value]) => {
+      const [_, prefix, restName] = propName.match(/(min|max)?(.+)/)
+      const normalizedName = toLowerCaseFirst(restName)
+      const displayName = [prefix, toDashedString(normalizedName)]
+        .filter(Boolean)
+        .join('-')
+
+      return { prefix, name: normalizedName, displayName, value }
+    })
 }

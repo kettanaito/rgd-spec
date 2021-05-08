@@ -24,6 +24,7 @@ export {
   joinQueryList,
 } from './utils/styles/createMediaQuery'
 export { default as normalizeQuery } from './utils/styles/normalizeQuery'
+export { staticMatchMedia } from './utils/styles/staticMatchMedia'
 
 /* Breakpoints */
 export { default as withBreakpoints } from './utils/breakpoints/withBreakpoints'
