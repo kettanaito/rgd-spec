@@ -93,12 +93,14 @@ storiesOf('Components|Visible', module).add(
 import UseViewportChange from './hooks/UseViewportChange'
 import UseResponsiveValue from './hooks/UseResponsiveValue'
 import UseBreakpointChange from './hooks/UseBreakpointChange'
+import UseCurrentBreakpoints from './hooks/UseCurrentBreakpoints'
 import UseResponsiveProps from './hooks/UseResponsiveProps'
 
 storiesOf('Hooks', module)
   .add('useViewportChange', () => <UseViewportChange />)
   .add('useResponsiveValue', () => <UseResponsiveValue />)
   .add('useBreakpointChange', () => <UseBreakpointChange />)
+  .add('useCurrentBreakpoints', () => <UseCurrentBreakpoints />)
   .add('useResponsiveProps', () => <UseResponsiveProps />)
 
 /**

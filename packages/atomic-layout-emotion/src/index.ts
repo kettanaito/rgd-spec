@@ -11,6 +11,7 @@ export {
   useMediaQuery,
   useViewportChange,
   useBreakpointChange,
+  useCurrentBreakpoints,
   useResponsiveValue,
   useResponsiveProps,
   useResponsiveQuery,
