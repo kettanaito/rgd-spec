@@ -9,6 +9,7 @@ import {
   generateComponents,
   applyStyles,
   warn,
+  omitProps,
 } from '@atomic-layout/core'
 import Box from './Box'
 import { withPlaceholder } from '../utils/withPlaceholder'

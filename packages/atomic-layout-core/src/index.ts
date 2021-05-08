@@ -52,6 +52,8 @@ export {
 /* Utilities */
 export { default as warn } from './utils/functions/warn'
 export { default as compose } from './utils/functions/compose'
+export { default as omit } from './utils/functions/omit'
+export { default as omitProps } from './utils/functions/omit/omitProps'
 export { default as throttle } from './utils/functions/throttle'
 export { default as transformNumeric } from './utils/math/transformNumeric'
 export { default as memoizeWith } from './utils/functions/memoizeWith'

@@ -1,7 +1,11 @@
-const memoizeWith = <F extends (...args: any[]) => any>(
+interface Cache {
+  [key: string]: any
+}
+
+export default function memoizeWith<F extends (...args: any[]) => any>(
   saltGenerator: (...args: Parameters<F>) => string,
-) => {
-  const cache: Record<string, any> = {}
+) {
+  const cache: Cache = {}
 
   return (func: F) =>
     function(...args: Parameters<F>): ReturnType<F> {
@@ -14,5 +18,3 @@ const memoizeWith = <F extends (...args: any[]) => any>(
       return cache[key]
     }
 }
-
-export default memoizeWith
